@@ -73,7 +73,6 @@ for j = 1:length(nu)
         y_out(j,i) = y;
     end
 end
-
 figure(3)
 hold on
 colors = {'b--','k--','g--'};
@@ -91,9 +90,9 @@ saveFigures(gcf,'asset-shorting-efficient-frontier',false)
 
 %% introduce linear transaction cost
 clear y_out
-fsell = [0,0.02,0.1];
-fbuy = fsell;
-mu = linspace(min(AssetMean),max(AssetMean),20);
+fsell = 10*[0.002,0.008,0.016];
+fbuy = fsell+0.05;
+mu = linspace(min(AssetMean),max(AssetMean)+0.5,20);
 xinit=rand(length(AssetMean),1);
 xinit = xinit/sum(xinit);
 for j = 1:length(fsell)
@@ -110,7 +109,6 @@ for j = 1:length(fsell)
         
         (1-fsell(j))*ones(1,length(AssetMean))*usell==(1+fbuy(j))*ones(1,length(AssetMean))*ubuy;
         AssetMean'*(xinit + ubuy - usell) == mu(i);
-        (xinit + ubuy - usell) >= 0;
         cvx_end
         
         y_out(j,i) = y;
@@ -123,12 +121,10 @@ for j = 1:length(nu)
     plot(sqrt(y_out(j,:)),mu,colors{j})
 end
 plot(diag(sqrt(AssetCovar)),AssetMean,'r.')
-text(diag(sqrt(AssetCovar)), AssetMean, AssetList, 'horizontal','left', 'vertical','top','fontsize',18)
+text(diag(sqrt(AssetCovar)), AssetMean, AssetList, 'horizontal','left', 'vertical','bottom','fontsize',18)
 xlabel('Asset standard deviation [Annualized]')
 ylabel('Asset mean return [Annualized]')
-plot(sqrt(xinit'*AssetCovar*xinit),AssetMean'*xinit,'go')
-text(sqrt(xinit'*AssetCovar*xinit),AssetMean'*xinit, 'Initial portfolio', 'horizontal','left', 'vertical','bottom','fontsize',12)
+plot(sqrt(xinit'*AssetCovar*xinit),AssetMean'*xinit,'g.')
 xlim([0 0.75])
-ylim([-0.05 0.3])
+ylim([-0.05 0.8])
 saveFigures(gcf,'asset-transaction-cost-efficient-frontier',false)
-
