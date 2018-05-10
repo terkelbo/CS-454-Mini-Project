@@ -133,6 +133,7 @@ fbuy = fsell;
 mu = linspace(min(AssetMean),max(AssetMean),20);
 xinit=rand(length(AssetMean),1);
 xinit = xinit/sum(xinit);
+% xinit = zeros(length(AssetMean),1);
 for j = 1:length(fsell)
     for i = 1:length(mu)
         cvx_begin quiet
@@ -156,7 +157,7 @@ end
 figure(4)
 hold on
 colors = {'b--','k--','g--'};
-for j = 1:length(nu)
+for j = 1:length(fsell)
     plot(sqrt(y_out(j,:)),mu,colors{j})
 end
 plot(diag(sqrt(AssetCovar)),AssetMean,'r.')
